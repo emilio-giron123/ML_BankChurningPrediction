@@ -1,5 +1,4 @@
 import csv
-import math
 import statistics
 from collections import Counter, defaultdict
 from pathlib import Path
