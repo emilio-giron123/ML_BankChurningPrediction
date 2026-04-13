@@ -1,27 +1,40 @@
 # ML Bank Churning Prediction
 
-This project predicts whether a bank customer will churn by using historical customer records. The workflow is organized so the data can be explored, cleaned, visualized, and modeled in separate stages, while still allowing the full pipeline to run from one entry point.
+This project predicts whether a bank customer will churn using historical customer data. The repository is organized so the churn workflow can be run end to end from one entry point, while still allowing each model to be run separately.
 
-The current project uses the processed dataset in [`data/processed/customer_churn_processed.csv`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/data/processed/customer_churn_processed.csv) for downstream analysis and modeling. That processed file removes columns that should not be used for training:
+The project now uses the processed dataset in [`data/processed/customer_churn_processed.csv`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/data/processed/customer_churn_processed.csv) for downstream analysis and modeling. That file removes columns that should not be used for training:
 
 - `RowNumber`
 - `CustomerId`
 - `Surname`
 - `Complain`
 
+## Project goal
+
+The codebase is built to answer three main questions:
+
+- Which customer attributes are most strongly related to churn
+- How accurately can customer churn be predicted with machine learning
+- Which model performs better for this classification problem
+
+The two models currently used are:
+
+- Logistic Regression
+- Random Forest Classifier
+
+This is a classification project, so the regression model used here is `logistic regression`, not linear regression.
+
 ## Current workflow
 
-The project follows this order:
+The full project flow is:
 
 1. Load the processed churn dataset.
-2. Run a text-based exploratory data analysis report.
+2. Print and save a text-based EDA report.
 3. Generate the EDA visuals in `figures/output/`.
-4. Run the feature-engineering workflow to confirm the processed dataset and preprocessing pipeline.
-5. Train and evaluate the two classification models:
-   - Logistic Regression
-   - Random Forest Classifier
-
-All saved text outputs go into [`results/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results), and all chart outputs go into [`figures/output/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/figures/output).
+4. Run the feature-engineering / preprocessing workflow.
+5. Train and compare logistic regression and random forest.
+6. Run hold-out evaluation, 5-fold cross-validation, and threshold analysis.
+7. Save model comparison text outputs and result visuals in `results/`.
 
 ## Project structure
 
@@ -48,6 +61,7 @@ ML_BankChurningPrediction/
 |  |- eda_analysis.py
 |  |- eda_visuals.py
 |  |- evaluate.py
+|  |- model_visuals.py
 |  |- models.py
 |  |- preprocessing.py
 |- main.py
@@ -56,7 +70,7 @@ ML_BankChurningPrediction/
 |- README.md
 ```
 
-## What each main file does
+## What the main code does
 
 ### `main.py`
 
@@ -64,79 +78,98 @@ ML_BankChurningPrediction/
 
 When you run it, it:
 
-1. runs the EDA text report
-2. generates the SVG visuals
-3. runs the feature-engineering workflow
-4. trains and evaluates both models
-5. prints the saved output paths
+1. Runs the EDA text report
+2. Generates the EDA visuals
+3. Runs the feature-engineering workflow
+4. Runs the full model comparison workflow
+5. Prints the saved artifact paths
 
-Use this file when you want the complete workflow in one run.
+Use this file when you want the full project output in one run.
 
 ### `src/config.py`
 
-[`src/config.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/config.py) stores the shared configuration used across the project.
+[`src/config.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/config.py) stores shared configuration such as:
 
-It defines:
-
-- project root paths
-- raw and processed data paths
-- output folders for figures and results
-- the churn target column, `Exited`
-- identifier columns that should not be treated as useful predictors
-- predictor columns that should be excluded from churn ranking
-
-This file keeps paths and column rules centralized so the rest of the project does not hardcode them repeatedly.
+- Raw and processed dataset paths
+- Output folder paths
+- The target column, `Exited`
+- Identifier columns
+- Excluded predictor columns
 
 ### `src/data_loader.py`
 
-[`src/data_loader.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/data_loader.py) reads the CSV file and converts it into row dictionaries. This is used by the lightweight EDA modules that do not need pandas.
+[`src/data_loader.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/data_loader.py) loads CSV rows into simple Python dictionaries. It is used by the lightweight EDA code that does not depend on pandas.
 
 ### `src/eda_analysis.py`
 
-[`src/eda_analysis.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/eda_analysis.py) builds the text-based exploration report.
+[`src/eda_analysis.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/eda_analysis.py) creates the text-based exploratory analysis report.
 
 It prints and saves:
 
-- first 5 rows
-- shape
-- column names
-- inferred data types
-- summary statistics
-- quartile information including `Q1`, `Q3`, and `IQR`
-- unique values per column
-- likely useless columns
-- strongest churn predictors
+- First 5 rows
+- Shape
+- Column names
+- Inferred data types
+- Summary statistics
+- Quartiles and IQR (min/ax, median, mean, std)
+- Unique values per column
+- Useless columns
+- Strongest churn-related features
 
-The saved report is written to [`results/analysis_report.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/analysis_report.txt).
+The output is saved to [`results/analysis_report.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/analysis_report.txt).
 
 ### `src/eda_visuals.py`
 
-[`src/eda_visuals.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/eda_visuals.py) creates the project's EDA charts and saves them as SVG files.
+[`src/eda_visuals.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/eda_visuals.py) creates the project EDA figures and saves them in [`figures/output/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/figures/output).
 
-The current visuals include:
+Current EDA figures:
 
 - `churn_distribution.svg`
 - `geography_churned.svg`
 - `age_vs_churn.svg`
 - `is_active_member_vs_churn.svg`
 
-These visuals are saved in [`figures/output/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/figures/output).
-
 ### `src/preprocessing.py`
 
 [`src/preprocessing.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/preprocessing.py) handles the feature-engineering and preprocessing setup used before modeling.
 
-Its responsibilities are:
+Its main responsibilities are:
 
-- remove excluded columns
-- separate features and target
-- define categorical and numerical feature groups
-- one-hot encode categorical variables
-- scale numerical variables
-- save the processed CSV used for training
-- create a train/test split summary for inspection
+- Remove excluded columns
+- Split the dataset into features and target
+- Define categorical and numeric columns
+- One-hot encode categorical variables
+- Scale numeric variables
+- Save the processed CSV
+- Create the train/test split used for modeling
 
 The feature-engineering summary is saved to [`results/feature_engineering_summary.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/feature_engineering_summary.txt).
+
+### `src/evaluate.py`
+
+[`src/evaluate.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/evaluate.py) contains the model-evaluation helpers.
+
+It currently supports:
+
+- Hold-out evaluation
+- Confusion matrix generation
+- ROC-AUC calculation
+- ROC curve data generation
+- 5-fold stratified cross-validation
+- Threshold analysis
+
+### `src/model_visuals.py`
+
+[`src/model_visuals.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/model_visuals.py) creates the model-evaluation visuals saved inside [`results/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results).
+
+It creates:
+
+- Model performance comparison
+- Confusion matrix analysis
+- ROC curve analysis
+- 5-fold cross-validation ROC-AUC graph
+- Metrics vs threshold graph
+- Random forest top 12 feature importance graph
 
 ### `src/models.py`
 
@@ -144,88 +177,120 @@ The feature-engineering summary is saved to [`results/feature_engineering_summar
 
 It includes:
 
-- the logistic regression pipeline
-- the random forest pipeline
-- the shared train/test split helper
-- a standalone workflow for logistic regression
-- a standalone workflow for random forest
-- a combined workflow that runs both models together
+- logistic regression pipeline
+- random forest pipeline
+- shared train/test split helper
+- standalone logistic regression workflow
+- standalone random forest workflow
+- full side-by-side comparison workflow
 
-This file is where model training and evaluation logic lives.
+The comparison workflow handles:
 
-### `src/evaluate.py`
+- Hold-out test metrics
+- Accuracy, precision, recall, F1-score, and ROC-AUC
+- 5-fold cross-validation
+- Threshold analysis
+- Result visual generation
 
-[`src/evaluate.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/evaluate.py) evaluates a trained model on the test set.
+### Logistic Regression
 
-It returns:
+[`run_logistic_regression.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/run_logistic_regression.py) runs only the logistic regression workflow.
 
-- confusion matrix
-- classification report
-- ROC-AUC
+It saves:
 
-### `run_logistic_regression.py`
+- [`results/logistic_regression_metrics.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/logistic_regression_metrics.txt)
+- hold-out metrics
+- 5-fold cross-validation summary
+- threshold analysis
 
-[`run_logistic_regression.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/run_logistic_regression.py) runs only the logistic regression workflow and saves the output to [`results/logistic_regression_metrics.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/logistic_regression_metrics.txt).
+### Random Forest 
 
-### `run_random_forest.py`
+[`run_random_forest.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/run_random_forest.py) runs only the random forest workflow.
 
-[`run_random_forest.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/run_random_forest.py) runs only the random forest workflow and saves the output to [`results/random_forest_metrics.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/random_forest_metrics.txt).
+It saves:
+
+- [`results/random_forest_metrics.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/random_forest_metrics.txt)
+- [`results/random_forest_top_12_feature_importance.svg`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/random_forest_top_12_feature_importance.svg)
+- hold-out metrics
+- 5-fold cross-validation summary
+- threshold analysis
+- random forest feature-importance visualization
+
+## Full comparison outputs
+
+When you run [`main.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/main.py) or call the comparison workflow, the main model comparison text summary is saved to:
+
+- [`results/model_comparison.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/model_comparison.txt)
+
+The comparison visuals saved in [`results/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results) are:
+
+- [`results/model_performance_comparison.svg`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/model_performance_comparison.svg)
+- [`results/confusion_matrix_analysis.svg`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/confusion_matrix_analysis.svg)
+- [`results/roc_curve_analysis.svg`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/roc_curve_analysis.svg)
+- [`results/five_fold_cv_roc_auc.svg`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/five_fold_cv_roc_auc.svg)
+- [`results/vs_threshold_analysis.svg`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/vs_threshold_analysis.svg)
+- [`results/random_forest_top_12_feature_importance.svg`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/random_forest_top_12_feature_importance.svg)
+
+These visuals show:
+
+- Side-by-side model metric performance
+- Confusion matrices for both models
+- ROC curves for both models
+- ROC-AUC stability across folds
+- How precision, recall, and F1 change across thresholds
+- The most important random forest features
 
 ## Notebooks
 
-The notebooks mirror the main stages of the project and are intended to make the workflow easier to follow interactively.
+The notebooks mirror the main stages of the project and make the workflow easier to follow interactively.
 
-### `notebooks/eda_analysis.ipynb`
-
-[`notebooks/eda_analysis.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/eda_analysis.ipynb) walks through the text-based EDA logic and basic churn-related findings.
-
-### `notebooks/eda_visuals.ipynb`
-
-[`notebooks/eda_visuals.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/eda_visuals.ipynb) walks through how the project visuals are generated.
-
-### `notebooks/feature_engineering.ipynb`
-
-[`notebooks/feature_engineering.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/feature_engineering.ipynb) shows how the dataset is cleaned for modeling, how excluded columns are removed, and how preprocessing is prepared.
-
-### `notebooks/logistic_regression.ipynb`
-
-[`notebooks/logistic_regression.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/logistic_regression.ipynb) focuses only on the logistic regression classifier. It shows how the processed data is loaded, how the pipeline is fit, and how the model is evaluated.
-
-### `notebooks/random_forest.ipynb`
-
-[`notebooks/random_forest.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/random_forest.ipynb) focuses only on the random forest classifier. It follows the same processed-data workflow while using the random forest model instead of logistic regression.
+- [`notebooks/eda_analysis.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/eda_analysis.ipynb): text-based exploratory analysis
+- [`notebooks/eda_visuals.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/eda_visuals.ipynb): EDA visual generation
+- [`notebooks/feature_engineering.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/feature_engineering.ipynb): processed data and preprocessing steps
+- [`notebooks/logistic_regression.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/logistic_regression.ipynb): logistic regression workflow
+- [`notebooks/random_forest.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/random_forest.ipynb): random forest workflow
 
 ## How to run
 
 ### Run the full workflow
 
 ```powershell
-.\.venv\Scripts\python.exe main.py
+python main.py
 ```
 
 ### Run only logistic regression
 
 ```powershell
-.\.venv\Scripts\python.exe run_logistic_regression.py
+python run_logistic_regression.py
 ```
 
 ### Run only random forest
 
 ```powershell
-.\.venv\Scripts\python.exe run_random_forest.py
+python run_random_forest.py
 ```
 
-## Outputs you should expect
+## Current outputs in `results/`
 
-### Text outputs in `results/`
+Text outputs:
 
 - `analysis_report.txt`
 - `feature_engineering_summary.txt`
-- `model_metrics.txt`
 - `logistic_regression_metrics.txt`
 - `random_forest_metrics.txt`
+- `model_metrics.txt`
+- `model_comparison.txt`
 
-### Visual outputs in `figures/output/`
+Model visual outputs:
+
+- `model_performance_comparison.svg`
+- `confusion_matrix_analysis.svg`
+- `roc_curve_analysis.svg`
+- `five_fold_cv_roc_auc.svg`
+- `vs_threshold_analysis.svg`
+- `random_forest_top_12_feature_importance.svg`
+
+## Current outputs in `figures/output/`
 
 - `churn_distribution.svg`
 - `geography_churned.svg`

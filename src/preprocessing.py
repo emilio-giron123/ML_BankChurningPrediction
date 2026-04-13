@@ -29,12 +29,8 @@ DROP_COLS = ["RowNumber", "CustomerId", "Surname", "Complain"]
 
 
 def prepare_features(df):
-    """
-    Drops unnecessary columns and separates features and target.
-    """
-    # Drop only the columns that are actually present in the input dataframe.
-    # This makes the function work for both the raw dataset and the already
-    # processed dataset written to `data/processed/`.
+
+    # Drops unnecessary columns and separates features and target.
     removable_cols = [column for column in DROP_COLS if column in df.columns]
     df = df.drop(columns=removable_cols)
 
@@ -48,11 +44,9 @@ def prepare_features(df):
 
 
 def build_preprocessor():
-    """
-    Builds preprocessing pipeline:
-    - One-hot encoding for categorical features
-    - Scaling for numerical features
-    """
+    # Builds preprocessing pipeline:
+    # One-hot encoding for categorical features
+    # Scaling for numerical features
     categorical_transformer = OneHotEncoder(drop="first")
 
     numerical_transformer = StandardScaler()
@@ -94,12 +88,8 @@ def build_random_forest_pipeline(preprocessor):
 
 
 def save_processed_dataset(df: pd.DataFrame, output_path=PROCESSED_DATA_PATH):
-    """
-    Writes a cleaned version of the dataset to `data/processed/`.
 
-    The saved file removes the excluded columns so downstream models train from
-    the processed dataset instead of the original raw CSV.
-    """
+    # Writes a cleaned version of the dataset to `data/processed/`.
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     removable_cols = [column for column in DROP_COLS if column in df.columns]
@@ -114,18 +104,7 @@ def run_feature_engineering_workflow(
     processed_output_path=PROCESSED_DATA_PATH,
     results_dir=RESULTS_DIR,
 ):
-    """
-    Runs the same feature-engineering flow demonstrated in the notebook:
-    - load the raw dataset with pandas
-    - save a processed CSV with excluded columns removed
-    - drop unused columns and split X / y
-    - build the preprocessing transformer
-    - fit-transform the feature matrix
-    - create a stratified train/test split
 
-    Returns a dictionary with the main intermediate objects so the workflow can
-    be reused by other code if needed.
-    """
     # Load the raw dataset from the configured input file.
     df = pd.read_csv(data_path)
 

@@ -59,7 +59,7 @@ Satisfaction Score: 5
 Card Type: 4
 Point Earned: 785
 
-Likely useless columns
+Useless columns
 
 Strongest predictors of churn
 Numeric features by correlation with Exited

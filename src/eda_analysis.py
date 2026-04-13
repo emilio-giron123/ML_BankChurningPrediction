@@ -337,7 +337,7 @@ def _print_analysis_report(path: Path = DATA_PATH) -> None:
         print(f"{column}: {unique_count}")
 
     # Highlight columns that are likely poor modeling features.
-    print("\nLikely useless columns")
+    print("\nUseless columns")
     for reason in identify_useless_columns(rows, columns):
         print(f"- {reason}")
 
@@ -371,13 +371,7 @@ def _print_analysis_report(path: Path = DATA_PATH) -> None:
 
 
 def run_analysis_report(path: Path = DATA_PATH, results_dir: Path = RESULTS_DIR) -> Path:
-    """
-    Runs the text-based analysis report, prints it to the terminal, and saves
-    the same report into `results/analysis_report.txt`.
-
-    Returning the saved path makes it easier for the main workflow to confirm
-    where the report artifact was written.
-    """
+    # Runs the analysis report, prints to the terminal, and saves into `results/analysis_report.txt`.
     buffer = StringIO()
     with redirect_stdout(buffer):
         _print_analysis_report(path)

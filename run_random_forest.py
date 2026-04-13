@@ -15,8 +15,9 @@ def main() -> None:
     results = run_random_forest_workflow()
 
     # Print the saved artifact path so the user can immediately find the
-    # metrics file produced by this standalone run.
+    # metrics file and feature-importance chart produced by this standalone run.
     print(f"Saved: {results['metrics_path']}")
+    print(f"Saved: {results['feature_importance_path']}")
 
 
 if __name__ == "__main__":

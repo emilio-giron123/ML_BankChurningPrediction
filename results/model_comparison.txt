@@ -1,0 +1,55 @@
+============================================================
+MODEL COMPARISON SUMMARY
+============================================================
+Metric                    Log. Regression    Random Forest
+------------------------------------------------------------
+Accuracy                           0.7895           0.8560
+Precision                          0.4330           0.7679
+Recall                             0.1029           0.4216
+F1-Score                           0.1663           0.5443
+ROC-AUC (test)                     0.7453           0.8464
+------------------------------------------------------------
+CV ROC-AUC Mean                    0.7490           0.8438
+CV ROC-AUC Std                     0.0075           0.0079
+
+--- Logistic Regression: Cross-Validation Fold Scores ---
+  Fold 1: 0.7500
+  Fold 2: 0.7349
+  Fold 3: 0.7492
+  Fold 4: 0.7542
+  Fold 5: 0.7564
+
+--- Random Forest: Cross-Validation Fold Scores ---
+  Fold 1: 0.8382
+  Fold 2: 0.8441
+  Fold 3: 0.8334
+  Fold 4: 0.8469
+  Fold 5: 0.8565
+
+--- Logistic Regression: Threshold Analysis ---
+   Threshold  Precision   Recall       F1  # Predicted
+         0.1     0.2545   0.9436   0.4008         1513
+         0.2     0.3636   0.6961   0.4777          781
+         0.3     0.4318   0.4191   0.4254          396
+         0.4     0.5149   0.2549   0.3410          202
+         0.5     0.4330   0.1029   0.1663           97
+         0.6     0.4419   0.0466   0.0843           43
+         0.7     0.3333   0.0123   0.0236           15
+
+--- Random Forest: Threshold Analysis ---
+   Threshold  Precision   Recall       F1  # Predicted
+         0.1     0.3005   0.9265   0.4538         1258
+         0.2     0.4190   0.7990   0.5497          778
+         0.3     0.5167   0.6838   0.5886          540
+         0.4     0.6489   0.5662   0.6047          356
+         0.5     0.7617   0.4387   0.5568          235
+         0.6     0.8333   0.3309   0.4737          162
+         0.7     0.8866   0.2108   0.3406           97
+
+Generated Visuals
+  Model performance comparison: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\results\model_performance_comparison.svg
+  Confusion matrix analysis: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\results\confusion_matrix_analysis.svg
+  ROC curve analysis: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\results\roc_curve_analysis.svg
+  5-fold cross-validation ROC-AUC: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\results\five_fold_cv_roc_auc.svg
+  Metrics vs threshold: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\results\vs_threshold_analysis.svg
+  Random forest top 12 feature importance: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\results\random_forest_top_12_feature_importance.svg

@@ -10,3 +10,20 @@ Random Forest
 weighted avg       0.85      0.86      0.84      2000
 
 ROC-AUC: 0.8464
+
+5-Fold CV ROC-AUC
+Scores: [np.float64(0.8382), np.float64(0.8441), np.float64(0.8334), np.float64(0.8469), np.float64(0.8565)]
+Mean: 0.8438
+Std: 0.0079
+
+Threshold Analysis
+ Threshold  Precision   Recall       F1  # Predicted
+       0.1     0.3005   0.9265   0.4538         1258
+       0.2     0.4190   0.7990   0.5497          778
+       0.3     0.5167   0.6838   0.5886          540
+       0.4     0.6489   0.5662   0.6047          356
+       0.5     0.7617   0.4387   0.5568          235
+       0.6     0.8333   0.3309   0.4737          162
+       0.7     0.8866   0.2108   0.3406           97
+
+Feature importance chart: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\results\random_forest_top_12_feature_importance.svg
