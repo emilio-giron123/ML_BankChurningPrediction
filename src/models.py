@@ -104,6 +104,12 @@ def _format_threshold_lines(threshold_results):
     ]
 
 
+def _format_cv_scores(scores):
+    # Convert numpy scalar values into plain formatted strings so saved text
+    # outputs show clean numeric values instead of `np.float64(...)`.
+    return [f"{float(score):.4f}" for score in scores]
+
+
 def run_logistic_regression_workflow(
     data_path=PROCESSED_DATA_PATH, results_dir=RESULTS_DIR
 ):
@@ -133,6 +139,7 @@ def run_logistic_regression_workflow(
     threshold_results = run_threshold_analysis(
         model, split_data["X_test"], split_data["y_test"]
     )
+    cv_score_strings = _format_cv_scores(cv_results["scores"])
     threshold_lines = _format_threshold_lines(threshold_results)
 
     # Print the main hold-out metrics first for quick inspection.
@@ -143,7 +150,7 @@ def run_logistic_regression_workflow(
     # Print the cross-validation summary so the user can see the average
     # performance and variation across folds.
     print("5-Fold CV ROC-AUC")
-    print(f"Scores: {[round(score, 4) for score in cv_results['scores']]}")
+    print(f"Scores: {cv_score_strings}")
     print(f"Mean: {cv_results['mean']:.4f}")
     print(f"Std: {cv_results['std']:.4f}")
 
@@ -169,7 +176,7 @@ def run_logistic_regression_workflow(
                 f"ROC-AUC: {results['roc_auc']:.4f}",
                 "",
                 "5-Fold CV ROC-AUC",
-                f"Scores: {[round(score, 4) for score in cv_results['scores']]}",
+                f"Scores: {cv_score_strings}",
                 f"Mean: {cv_results['mean']:.4f}",
                 f"Std: {cv_results['std']:.4f}",
                 "",
@@ -222,6 +229,7 @@ def run_random_forest_workflow(
     threshold_results = run_threshold_analysis(
         model, split_data["X_test"], split_data["y_test"]
     )
+    cv_score_strings = _format_cv_scores(cv_results["scores"])
     threshold_lines = _format_threshold_lines(threshold_results)
 
     # Print the main hold-out metrics first for quick inspection.
@@ -232,7 +240,7 @@ def run_random_forest_workflow(
     # Print the cross-validation summary so the user can see the average
     # performance and variation across folds.
     print("5-Fold CV ROC-AUC")
-    print(f"Scores: {[round(score, 4) for score in cv_results['scores']]}")
+    print(f"Scores: {cv_score_strings}")
     print(f"Mean: {cv_results['mean']:.4f}")
     print(f"Std: {cv_results['std']:.4f}")
 
@@ -259,7 +267,7 @@ def run_random_forest_workflow(
                 f"ROC-AUC: {results['roc_auc']:.4f}",
                 "",
                 "5-Fold CV ROC-AUC",
-                f"Scores: {[round(score, 4) for score in cv_results['scores']]}",
+                f"Scores: {cv_score_strings}",
                 f"Mean: {cv_results['mean']:.4f}",
                 f"Std: {cv_results['std']:.4f}",
                 "",

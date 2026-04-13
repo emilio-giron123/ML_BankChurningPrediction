@@ -6,19 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="d442270b-f477-41ba-b8c6-78f346c71e22" name="Changes" comment="EDA Analysis">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/figures/output/age_vs_churn.svg" beforeDir="false" afterPath="$PROJECT_DIR$/figures/output/age_vs_churn.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/figures/output/churn_distribution.svg" beforeDir="false" afterPath="$PROJECT_DIR$/figures/output/churn_distribution.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/figures/output/geography_churned.svg" beforeDir="false" afterPath="$PROJECT_DIR$/figures/output/geography_churned.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/figures/output/is_active_member_vs_churn.svg" beforeDir="false" afterPath="$PROJECT_DIR$/figures/output/is_active_member_vs_churn.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/analysis_report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results/analysis_report.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/logistic_regression_metrics.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results/logistic_regression_metrics.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/random_forest_metrics.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results/random_forest_metrics.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_random_forest.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_random_forest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/eda_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/eda_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/evaluate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/random_forest_top_12_feature_importance.svg" beforeDir="false" afterPath="$PROJECT_DIR$/results/random_forest_top_12_feature_importance.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/preprocessing.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
