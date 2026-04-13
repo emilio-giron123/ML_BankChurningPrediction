@@ -1,12 +1,27 @@
 # ML Bank Churning Prediction
 
-This project performs exploratory data analysis on a bank customer churn dataset and generates a small set of EDA visuals.
+This project predicts whether a bank customer will churn by using historical customer records. The workflow is organized so the data can be explored, cleaned, visualized, and modeled in separate stages, while still allowing the full pipeline to run from one entry point.
 
-The code is organized so that:
-- `main.py` is the entry point
-- reusable logic lives in `src/`
-- raw data lives in `data/raw/`
-- generated figures are written to `figures/output/`
+The current project uses the processed dataset in [`data/processed/customer_churn_processed.csv`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/data/processed/customer_churn_processed.csv) for downstream analysis and modeling. That processed file removes columns that should not be used for training:
+
+- `RowNumber`
+- `CustomerId`
+- `Surname`
+- `Complain`
+
+## Current workflow
+
+The project follows this order:
+
+1. Load the processed churn dataset.
+2. Run a text-based exploratory data analysis report.
+3. Generate the EDA visuals in `figures/output/`.
+4. Run the feature-engineering workflow to confirm the processed dataset and preprocessing pipeline.
+5. Train and evaluate the two classification models:
+   - Logistic Regression
+   - Random Forest Classifier
+
+All saved text outputs go into [`results/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results), and all chart outputs go into [`figures/output/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/figures/output).
 
 ## Project structure
 
@@ -16,10 +31,15 @@ ML_BankChurningPrediction/
 |  |- raw/
 |  |  |- Customer-Churn-Records.csv
 |  |- processed/
+|  |  |- customer_churn_processed.csv
 |- figures/
 |  |- output/
-|  |- EDAVisuals.py
 |- notebooks/
+|  |- eda_analysis.ipynb
+|  |- eda_visuals.ipynb
+|  |- feature_engineering.ipynb
+|  |- logistic_regression.ipynb
+|  |- random_forest.ipynb
 |- results/
 |- src/
 |  |- __init__.py
@@ -27,349 +47,187 @@ ML_BankChurningPrediction/
 |  |- data_loader.py
 |  |- eda_analysis.py
 |  |- eda_visuals.py
+|  |- evaluate.py
+|  |- models.py
+|  |- preprocessing.py
 |- main.py
+|- run_logistic_regression.py
+|- run_random_forest.py
 |- README.md
 ```
 
-## What the program does
-
-When you run `main.py`, the program does two things in order:
-
-1. It prints an EDA report for the churn dataset.
-2. It generates visual files and saves them inside `figures/output/`.
-
-The report includes:
-- first 5 rows
-- dataset shape
-- column names
-- inferred data types
-- summary statistics
-- unique value counts
-- likely useless columns
-- strongest predictors of churn
-- a leakage check for `Complain`
-
-The visuals include:
-- churn distribution
-- geography vs churn
-- age vs churn
-- `IsActiveMember` vs churn
-
-## How execution works
-
-The full runtime flow is:
-
-1. `main.py` starts the program.
-2. `main.py` imports `run_analysis_report` from `src.eda_analysis`.
-3. `main.py` imports `generate_all_eda_visuals` from `src.eda_visuals`.
-4. `run_analysis_report()` loads the CSV data and prints the text-based analysis.
-5. `generate_all_eda_visuals()` loads the same CSV data and creates `.svg` charts.
-6. `main.py` prints the saved output paths for the generated visual files.
-
-So `main.py` is only the coordinator. The real analysis and plotting logic lives in the `src` package.
-
-## File-by-file explanation
+## What each main file does
 
 ### `main.py`
 
-This is the entry point for the whole project.
+[`main.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/main.py) is the full-project entry point.
 
-It does not contain the analysis logic itself. Instead, it calls two high-level functions:
-- `run_analysis_report()`
-- `generate_all_eda_visuals()`
+When you run it, it:
 
-Its job is:
-- start the report
-- start figure generation
-- print the saved figure paths
+1. runs the EDA text report
+2. generates the SVG visuals
+3. runs the feature-engineering workflow
+4. trains and evaluates both models
+5. prints the saved output paths
 
-If you want to run the full project workflow, this is the file to run.
-
-### `src/__init__.py`
-
-This file marks `src/` as a Python package.
-
-That allows imports such as:
-
-```python
-from src.eda_analysis import run_analysis_report
-```
-
-Without this file, Python would not treat `src` as a proper importable package.
+Use this file when you want the complete workflow in one run.
 
 ### `src/config.py`
 
-This file stores shared project constants in one place.
+[`src/config.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/config.py) stores the shared configuration used across the project.
 
 It defines:
-- `PROJECT_ROOT`: the root folder of the repository
-- `DATA_PATH`: the path to the raw churn CSV file
-- `FIGURES_OUTPUT_DIR`: where charts should be saved
-- `TARGET_COLUMN`: the target label, which is `Exited`
-- `IDENTIFIER_COLUMNS`: columns that behave like identifiers and should not be treated as meaningful predictors
-- `EXCLUDED_PREDICTOR_COLUMNS`: columns excluded from predictor ranking, currently `Complain`
 
-Why this matters:
-- path logic is centralized
-- column rules are centralized
-- other files do not need to repeat the same hardcoded values
+- project root paths
+- raw and processed data paths
+- output folders for figures and results
+- the churn target column, `Exited`
+- identifier columns that should not be treated as useful predictors
+- predictor columns that should be excluded from churn ranking
+
+This file keeps paths and column rules centralized so the rest of the project does not hardcode them repeatedly.
 
 ### `src/data_loader.py`
 
-This file is responsible for loading the CSV dataset.
-
-It currently contains one function:
-
-```python
-load_rows(path: Path) -> list[dict[str, str]]
-```
-
-What it does:
-- opens the CSV file
-- reads the header row
-- converts every data row into a dictionary
-- returns all rows as a list
-
-Each row looks conceptually like this:
-
-```python
-{
-    "CreditScore": "619",
-    "Geography": "France",
-    "Age": "42",
-    "Exited": "1"
-}
-```
-
-This means the rest of the code works with named columns instead of raw CSV lines.
+[`src/data_loader.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/data_loader.py) reads the CSV file and converts it into row dictionaries. This is used by the lightweight EDA modules that do not need pandas.
 
 ### `src/eda_analysis.py`
 
-This file contains the text-based analysis logic.
+[`src/eda_analysis.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/eda_analysis.py) builds the text-based exploration report.
 
-Its main public function is:
+It prints and saves:
 
-```python
-run_analysis_report()
-```
+- first 5 rows
+- shape
+- column names
+- inferred data types
+- summary statistics
+- quartile information including `Q1`, `Q3`, and `IQR`
+- unique values per column
+- likely useless columns
+- strongest churn predictors
 
-This function:
-- loads the dataset
-- extracts column names
-- builds a column-oriented view of the data
-- infers simple types for each column
-- prints multiple EDA sections
-
-Important helper functions inside this file:
-
-#### `infer_dtype(values)`
-
-Determines whether a column should be treated as:
-- `int`
-- `float`
-- `string`
-- `unknown`
-
-It ignores empty strings before trying conversions.
-
-#### `is_numeric(dtype)`
-
-Returns `True` if the inferred type is numeric.
-
-This is used to decide whether a column gets numeric summary statistics or categorical summary statistics.
-
-#### `numeric_summary(values)`
-
-Builds summary statistics for numeric columns.
-
-It reports:
-- count
-- mean
-- standard deviation
-- minimum
-- Q1
-- median
-- Q3
-- IQR
-- maximum
-
-#### `categorical_summary(values)`
-
-Builds summary information for non-numeric columns.
-
-It reports:
-- number of non-empty values
-- number of unique values
-- most common value
-- frequency of the most common value
-
-#### `exited_rate_by_group(rows, column)`
-
-Computes churn rate by category.
-
-Examples:
-- churn rate by geography
-- churn rate by `IsActiveMember`
-- churn rate by `Complain`
-
-It returns both:
-- group size
-- exited rate
-
-#### `identify_useless_columns(rows, columns)`
-
-Identifies columns that are poor modeling features.
-
-It flags:
-- row-level identifiers such as `RowNumber` and `CustomerId`
-- `Surname` because it is a high-cardinality personal identifier
-- `Complain` because it behaves like target leakage
-
-#### `pearson_correlation(x_values, y_values)`
-
-Computes Pearson correlation between a numeric feature and the target.
-
-This is used to find which numeric features are most related to churn.
-
-#### `numeric_feature_correlations(rows, columns, dtypes)`
-
-Ranks numeric features by the strength of their correlation with `Exited`.
-
-It excludes:
-- the target column itself
-- identifier-like columns
-- `Complain`
-
-For each feature, it reports:
-- correlation with churn
-- mean value for churned customers
-- mean value for non-churned customers
-
-#### `categorical_feature_differences(rows, columns, dtypes)`
-
-Ranks categorical features by how different their churn rates are across categories.
-
-For example:
-- if one geography has much higher churn than another, that feature will rank higher
-
-#### `build_column_values(rows, columns)`
-
-Transforms the data from row-based form into column-based form.
-
-This makes it easier to summarize each column efficiently.
-
-#### `infer_all_dtypes(column_values)`
-
-Runs `infer_dtype` across all columns and returns a dictionary of inferred types.
+The saved report is written to [`results/analysis_report.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/analysis_report.txt).
 
 ### `src/eda_visuals.py`
 
-This file contains the chart generation logic.
+[`src/eda_visuals.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/eda_visuals.py) creates the project's EDA charts and saves them as SVG files.
 
-Its main public function is:
+The current visuals include:
 
-```python
-generate_all_eda_visuals()
-```
-
-This function:
-- creates the output directory if needed
-- loads the dataset
-- calls each plotting function
-- returns the list of generated file paths
-
-Important functions in this module:
-
-#### `ensure_output_dir(output_dir)`
-
-Creates the output folder if it does not already exist.
-
-#### `plot_churn_distribution(rows, output_dir)`
-
-Creates a bar chart showing:
-- not churned count
-- churned count
-
-Saved as:
-- `figures/output/churn_distribution.svg`
-
-#### `plot_geography_vs_churn(rows, output_dir)`
-
-Creates a grouped bar chart comparing churned vs not churned customers for each geography.
-
-Saved as:
-- `figures/output/geography_vs_churn.svg`
-
-#### `plot_age_vs_churn(rows, output_dir)`
-
-Creates a boxplot of age split by churn status.
-
-This helps show how the age distribution differs between churned and non-churned customers.
-
-Saved as:
-- `figures/output/age_vs_churn.svg`
-
-#### `plot_is_active_member_vs_churn(rows, output_dir)`
-
-Creates a bar chart of churn rate for:
-- inactive members
-- active members
-
-Saved as:
-- `figures/output/is_active_member_vs_churn.svg`
-
-## Data location
-
-The current code expects the dataset here:
-
-[`data/raw/Customer-Churn-Records.csv`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/data/raw/Customer-Churn-Records.csv)
-
-That path is controlled by `src/config.py`.
-
-## Generated outputs
-
-The visual outputs are written here:
-
-[`figures/output`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/figures/output)
-
-Current expected files:
 - `churn_distribution.svg`
-- `geography_vs_churn.svg`
+- `geography_churned.svg`
 - `age_vs_churn.svg`
 - `is_active_member_vs_churn.svg`
 
-## How to run the project
+These visuals are saved in [`figures/output/`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/figures/output).
 
-From the project root:
+### `src/preprocessing.py`
+
+[`src/preprocessing.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/preprocessing.py) handles the feature-engineering and preprocessing setup used before modeling.
+
+Its responsibilities are:
+
+- remove excluded columns
+- separate features and target
+- define categorical and numerical feature groups
+- one-hot encode categorical variables
+- scale numerical variables
+- save the processed CSV used for training
+- create a train/test split summary for inspection
+
+The feature-engineering summary is saved to [`results/feature_engineering_summary.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/feature_engineering_summary.txt).
+
+### `src/models.py`
+
+[`src/models.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/models.py) contains the machine-learning workflow.
+
+It includes:
+
+- the logistic regression pipeline
+- the random forest pipeline
+- the shared train/test split helper
+- a standalone workflow for logistic regression
+- a standalone workflow for random forest
+- a combined workflow that runs both models together
+
+This file is where model training and evaluation logic lives.
+
+### `src/evaluate.py`
+
+[`src/evaluate.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/src/evaluate.py) evaluates a trained model on the test set.
+
+It returns:
+
+- confusion matrix
+- classification report
+- ROC-AUC
+
+### `run_logistic_regression.py`
+
+[`run_logistic_regression.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/run_logistic_regression.py) runs only the logistic regression workflow and saves the output to [`results/logistic_regression_metrics.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/logistic_regression_metrics.txt).
+
+### `run_random_forest.py`
+
+[`run_random_forest.py`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/run_random_forest.py) runs only the random forest workflow and saves the output to [`results/random_forest_metrics.txt`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/results/random_forest_metrics.txt).
+
+## Notebooks
+
+The notebooks mirror the main stages of the project and are intended to make the workflow easier to follow interactively.
+
+### `notebooks/eda_analysis.ipynb`
+
+[`notebooks/eda_analysis.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/eda_analysis.ipynb) walks through the text-based EDA logic and basic churn-related findings.
+
+### `notebooks/eda_visuals.ipynb`
+
+[`notebooks/eda_visuals.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/eda_visuals.ipynb) walks through how the project visuals are generated.
+
+### `notebooks/feature_engineering.ipynb`
+
+[`notebooks/feature_engineering.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/feature_engineering.ipynb) shows how the dataset is cleaned for modeling, how excluded columns are removed, and how preprocessing is prepared.
+
+### `notebooks/logistic_regression.ipynb`
+
+[`notebooks/logistic_regression.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/logistic_regression.ipynb) focuses only on the logistic regression classifier. It shows how the processed data is loaded, how the pipeline is fit, and how the model is evaluated.
+
+### `notebooks/random_forest.ipynb`
+
+[`notebooks/random_forest.ipynb`](/C:/Users/Emilio/PycharmProjects/ML_BankChurningPrediction/notebooks/random_forest.ipynb) focuses only on the random forest classifier. It follows the same processed-data workflow while using the random forest model instead of logistic regression.
+
+## How to run
+
+### Run the full workflow
 
 ```powershell
 .\.venv\Scripts\python.exe main.py
 ```
 
-If you want to run the modules separately:
+### Run only logistic regression
 
 ```powershell
-.\.venv\Scripts\python.exe src\eda_analysis.py
-.\.venv\Scripts\python.exe src\eda_visuals.py
+.\.venv\Scripts\python.exe run_logistic_regression.py
 ```
 
-## What to expect when you run `main.py`
+### Run only random forest
 
-You should see:
-- the printed EDA report in the terminal
-- one `Saved: ...` line per generated figure
+```powershell
+.\.venv\Scripts\python.exe run_random_forest.py
+```
 
-The final output is:
-- a text summary of the dataset and churn relationships
-- a set of SVG visualizations in `figures/output/`
+## Outputs you should expect
 
-## Summary
+### Text outputs in `results/`
 
-In simple terms:
-- `main.py` runs everything
-- `src/config.py` stores shared paths and constants
-- `src/data_loader.py` reads the CSV
-- `src/eda_analysis.py` prints the analysis report
-- `src/eda_visuals.py` creates the charts
+- `analysis_report.txt`
+- `feature_engineering_summary.txt`
+- `model_metrics.txt`
+- `logistic_regression_metrics.txt`
+- `random_forest_metrics.txt`
 
-That is the full working flow of the current codebase.
+### Visual outputs in `figures/output/`
+
+- `churn_distribution.svg`
+- `geography_churned.svg`
+- `age_vs_churn.svg`
+- `is_active_member_vs_churn.svg`

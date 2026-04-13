@@ -1,0 +1,11 @@
+Feature engineering
+Loaded dataframe shape: (10000, 14)
+Processed dataframe shape: (10000, 14)
+Processed CSV saved to: C:\Users\Emilio\PycharmProjects\ML_BankChurningPrediction\data\processed\customer_churn_processed.csv
+Feature matrix shape before preprocessing: (10000, 13)
+Target vector shape: (10000,)
+Transformed feature matrix shape: (10000, 14)
+Train feature shape: (8000, 13)
+Test feature shape: (2000, 13)
+Train target shape: (8000,)
+Test target shape: (2000,)

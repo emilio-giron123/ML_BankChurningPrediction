@@ -1,0 +1,87 @@
+First 5 rows
+{'CreditScore': '619', 'Geography': 'France', 'Gender': 'Female', 'Age': '42', 'Tenure': '2', 'Balance': '0.0', 'NumOfProducts': '1', 'HasCrCard': '1', 'IsActiveMember': '1', 'EstimatedSalary': '101348.88', 'Exited': '1', 'Satisfaction Score': '2', 'Card Type': 'DIAMOND', 'Point Earned': '464'}
+{'CreditScore': '608', 'Geography': 'Spain', 'Gender': 'Female', 'Age': '41', 'Tenure': '1', 'Balance': '83807.86', 'NumOfProducts': '1', 'HasCrCard': '0', 'IsActiveMember': '1', 'EstimatedSalary': '112542.58', 'Exited': '0', 'Satisfaction Score': '3', 'Card Type': 'DIAMOND', 'Point Earned': '456'}
+{'CreditScore': '502', 'Geography': 'France', 'Gender': 'Female', 'Age': '42', 'Tenure': '8', 'Balance': '159660.8', 'NumOfProducts': '3', 'HasCrCard': '1', 'IsActiveMember': '0', 'EstimatedSalary': '113931.57', 'Exited': '1', 'Satisfaction Score': '3', 'Card Type': 'DIAMOND', 'Point Earned': '377'}
+{'CreditScore': '699', 'Geography': 'France', 'Gender': 'Female', 'Age': '39', 'Tenure': '1', 'Balance': '0.0', 'NumOfProducts': '2', 'HasCrCard': '0', 'IsActiveMember': '0', 'EstimatedSalary': '93826.63', 'Exited': '0', 'Satisfaction Score': '5', 'Card Type': 'GOLD', 'Point Earned': '350'}
+{'CreditScore': '850', 'Geography': 'Spain', 'Gender': 'Female', 'Age': '43', 'Tenure': '2', 'Balance': '125510.82', 'NumOfProducts': '1', 'HasCrCard': '1', 'IsActiveMember': '1', 'EstimatedSalary': '79084.1', 'Exited': '0', 'Satisfaction Score': '5', 'Card Type': 'GOLD', 'Point Earned': '425'}
+
+Shape
+(10000, 14)
+
+Column names
+['CreditScore', 'Geography', 'Gender', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'HasCrCard', 'IsActiveMember', 'EstimatedSalary', 'Exited', 'Satisfaction Score', 'Card Type', 'Point Earned']
+
+Data types
+CreditScore: int
+Geography: string
+Gender: string
+Age: int
+Tenure: int
+Balance: float
+NumOfProducts: int
+HasCrCard: int
+IsActiveMember: int
+EstimatedSalary: float
+Exited: int
+Satisfaction Score: int
+Card Type: string
+Point Earned: int
+
+Summary statistics
+CreditScore: count=10000, mean=650.5288, std=96.6533, min=350.0000, Q1=584.0000, median=652.0000, Q3=718.0000, IQR=134.0000, max=850.0000
+Geography: count=10000, unique=3, top=France, freq=5014
+Gender: count=10000, unique=2, top=Male, freq=5457
+Age: count=10000, mean=38.9218, std=10.4878, min=18.0000, Q1=32.0000, median=37.0000, Q3=44.0000, IQR=12.0000, max=92.0000
+Tenure: count=10000, mean=5.0128, std=2.8922, min=0.0000, Q1=3.0000, median=5.0000, Q3=7.0000, IQR=4.0000, max=10.0000
+Balance: count=10000, mean=76485.8893, std=62397.4052, min=0.0000, Q1=0.0000, median=97198.5400, Q3=127644.2400, IQR=127644.2400, max=250898.0900
+NumOfProducts: count=10000, mean=1.5302, std=0.5817, min=1.0000, Q1=1.0000, median=1.0000, Q3=2.0000, IQR=1.0000, max=4.0000
+HasCrCard: count=10000, mean=0.7055, std=0.4558, min=0.0000, Q1=0.0000, median=1.0000, Q3=1.0000, IQR=1.0000, max=1.0000
+IsActiveMember: count=10000, mean=0.5151, std=0.4998, min=0.0000, Q1=0.0000, median=1.0000, Q3=1.0000, IQR=1.0000, max=1.0000
+EstimatedSalary: count=10000, mean=100090.2399, std=57510.4928, min=11.5800, Q1=51002.1100, median=100193.9150, Q3=149388.2475, IQR=98386.1375, max=199992.4800
+Exited: count=10000, mean=0.2038, std=0.4028, min=0.0000, Q1=0.0000, median=0.0000, Q3=0.0000, IQR=0.0000, max=1.0000
+Satisfaction Score: count=10000, mean=3.0138, std=1.4059, min=1.0000, Q1=2.0000, median=3.0000, Q3=4.0000, IQR=2.0000, max=5.0000
+Card Type: count=10000, unique=4, top=DIAMOND, freq=2507
+Point Earned: count=10000, mean=606.5151, std=225.9248, min=119.0000, Q1=410.0000, median=605.0000, Q3=801.0000, IQR=391.0000, max=1000.0000
+
+Unique values per column
+CreditScore: 460
+Geography: 3
+Gender: 2
+Age: 70
+Tenure: 11
+Balance: 6382
+NumOfProducts: 4
+HasCrCard: 2
+IsActiveMember: 2
+EstimatedSalary: 9999
+Exited: 2
+Satisfaction Score: 5
+Card Type: 4
+Point Earned: 785
+
+Likely useless columns
+
+Strongest predictors of churn
+Numeric features by correlation with Exited
+Age: correlation=0.2853, mean_churned=44.8356, mean_non_churned=37.4081
+IsActiveMember: correlation=-0.1564, mean_churned=0.3606, mean_non_churned=0.5546
+Balance: correlation=0.1186, mean_churned=91109.4760, mean_non_churned=72742.7507
+NumOfProducts: correlation=-0.0476, mean_churned=1.4755, mean_non_churned=1.5442
+CreditScore: correlation=-0.0268, mean_churned=645.4146, mean_non_churned=651.8379
+Tenure: correlation=-0.0137, mean_churned=4.9347, mean_non_churned=5.0328
+EstimatedSalary: correlation=0.0125, mean_churned=101509.9088, mean_non_churned=99726.8531
+HasCrCard: correlation=-0.0070, mean_churned=0.6992, mean_non_churned=0.7071
+
+Categorical features by churn-rate difference
+Geography: strongest churn-rate gap=0.1627
+  Germany: count=2509, exited_rate=0.3244
+  Spain: count=2477, exited_rate=0.1667
+  France: count=5014, exited_rate=0.1617
+Gender: strongest churn-rate gap=0.0860
+  Female: count=4543, exited_rate=0.2507
+  Male: count=5457, exited_rate=0.1647
+Card Type: strongest churn-rate gap=0.0251
+  DIAMOND: count=2507, exited_rate=0.2178
+  PLATINUM: count=2495, exited_rate=0.2036
+  SILVER: count=2496, exited_rate=0.2011
+  GOLD: count=2502, exited_rate=0.1926
